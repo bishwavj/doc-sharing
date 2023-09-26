@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<script>
+        document.addEventListener('DOMContentLoaded', function () {
+                function handleLogin(event) {
+                        event.preventDefault();
+                        const email = document.getElementById('email').value;
+                        const password = document.getElementById('password').value;
+
+                        fetch('/api/login', {
+                                method: 'POST',
+                                headers: {
+                                        'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ email, password })
+                        })
+                                .then(response => response.json())
+                                .then(data => {
+                                        localStorage.setItem('token', data.token);
+                                        alert('Response: ' + JSON.stringify(data));
+                                        window.location.href = '/upload';
+                                })
+                                .catch(error => {
+                                        alert('Error: ' + error.message);
+                                });
+                }
+
+                document.getElementById('loginForm').addEventListener('submit', handleLogin);
+        });
+</script>
+
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login</title>
+        <style>
+                body {
+                        font-family: Arial, sans-serif;
+                        background-color: #f4f4f4;
+                        text-align: center;
+                        padding: 50px;
+                }
+
+                h2 {
+                        color: #333;
+                }
+
+                form {
+                        max-width: 400px;
+                        margin: 0 auto;
+                        background-color: #fff;
+                        padding: 20px;
+                        border-radius: 10px;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                }
+
+                div {
+                        margin-bottom: 15px;
+                        text-align: left;
+                }
+
+                label {
+                        font-weight: bold;
+                        display: block;
+                        margin-bottom: 5px;
+                }
+
+                input {
+                        width: 100%;
+                        padding: 10px;
+                        border: 1px solid #ccc;
+                        border-radius: 4px;
+                        box-sizing: border-box;
+                }
+
+                button {
+                        background-color: #4caf50;
+                        color: #fff;
+                        border: none;
+                        padding: 10px 20px;
+                        font-size: 16px;
+                        border-radius: 4px;
+                        cursor: pointer;
+                }
+
+                button:hover {
+                        background-color: #45a049;
+                }
+        </style>
+</head>
+
+<body>
+        <h2>Login</h2>
+        <form id="loginForm">
+                <div>
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                </div>
+                <div>
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit">Login</button>
+        </form>
+</body>
+
+</html>

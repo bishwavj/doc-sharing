@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Download File</title>
+</head>
+
+<style>
+        body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                text-align: center;
+                padding: 50px;
+        }
+
+        h2 {
+                color: #333;
+        }
+
+        form {
+                max-width: 400px;
+                margin: 0 auto;
+                background-color: #fff;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        div {
+                margin-bottom: 15px;
+                text-align: left;
+        }
+
+        label {
+                font-weight: bold;
+                display: block;
+                margin-bottom: 5px;
+        }
+
+        input {
+                width: calc(100% - 12px);
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;
+        }
+
+        button {
+                background-color: #4caf50;
+                color: #fff;
+                border: none;
+                padding: 10px 20px;
+                font-size: 16px;
+                border-radius: 4px;
+                cursor: pointer;
+        }
+
+        button:hover {
+                background-color: #45a049;
+        }
+</style>
+
+<body>
+        <h2>Download File</h2>
+        <form id="downloadForm">
+                <div>
+                        <label for="linkId">Link ID</label>
+                        <input type="text" id="linkId" name="linkId">
+                </div>
+                <div>
+                        <label for="fileToken">Token (file token)</label>
+                        <input type="text" id="fileToken" name="fileToken">
+                </div>
+                <div>
+                        <label for="otp">One-Time Password (OTP)</label>
+                        <input type="text" id="otp" name="otp">
+                </div>
+                <button type="submit">Download File</button>
+        </form>
+        <a>Only the document owner and users who have been shared with can download the file.</a>
+
+        <script>
+                 function populateFields() {
+                                const linkIdInput = document.getElementById('linkId');
+                                const tokenInput = document.getElementById('fileToken');
+                                const otpInput = document.getElementById('otp');
+
+                                const linkId = localStorage.getItem('linkId');
+                                const fileToken = localStorage.getItem('fileToken');
+                                const otp = localStorage.getItem('otp');
+
+                                linkIdInput.value = linkId || '';
+                                tokenInput.value = fileToken || '';
+                                otpInput.value = otp || '';
+                        }
+
+                document.getElementById('downloadForm').addEventListener('submit', function (event) {
+                        event.preventDefault();
+
+                        const linkId = document.getElementById('linkId').value;
+                        const fileToken = document.getElementById('fileToken').value;
+                        const otp = document.getElementById('otp').value;
+                        const token = localStorage.getItem('token'); 
+
+                        fetch(`/api/download/${linkId}`, {
+                                method: 'POST',
+                                headers: {
+                                        'Authorization': `Bearer ${token}`,
+                                        'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({fileToken, otp })
+                        })      .then(response => response.json())
+                                .then(data => {
+                                        alert('Response: ' + data.fileLink);
+                                        window.open(data.fileLink, '_blank');
+                                })
+                                .catch(error => {
+                                        alert('Error: ' + error.message);
+                                });
+                });
+
+                populateFields();
+        </script>
+</body>
+
+</html>
